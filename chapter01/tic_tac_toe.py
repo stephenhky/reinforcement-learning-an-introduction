@@ -86,7 +86,7 @@ class State:
         return new_state
 
     # print the board
-    def print(self):
+    def printboard(self):
         for i in range(0, BOARD_ROWS):
             print('-------------')
             out = '| '
@@ -148,7 +148,7 @@ class Judger:
             yield self.p2
 
     # @print: if True, print each board during the game
-    def play(self, print=False):
+    def play(self, toprint=False):
         alternator = self.alternate()
         self.reset()
         current_state = State()
@@ -156,16 +156,16 @@ class Judger:
         self.p2.set_state(current_state)
         while True:
             player = next(alternator)
-            if print:
-                current_state.print()
+            if toprint:
+                current_state.printboard()
             [i, j, symbol] = player.act()
             next_state_hash = current_state.next_state(i, j, symbol).hash()
             current_state, is_end = all_states[next_state_hash]
             self.p1.set_state(current_state)
             self.p2.set_state(current_state)
             if is_end:
-                if print:
-                    current_state.print()
+                if toprint:
+                    current_state.printboard()
                 return current_state.winner
 
 # AI player
@@ -276,7 +276,7 @@ class HumanPlayer:
         return
 
     def act(self):
-        self.state.print()
+        self.state.printboard()
         key = input("Input your position:")
         data = self.keys.index(key)
         i = data // int(BOARD_COLS)
@@ -290,7 +290,7 @@ def train(epochs):
     player1_win = 0.0
     player2_win = 0.0
     for i in range(1, epochs + 1):
-        winner = judger.play(print=False)
+        winner = judger.play(toprint=False)
         if winner == 1:
             player1_win += 1
         if winner == -1:
